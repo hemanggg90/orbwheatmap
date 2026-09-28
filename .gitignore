@@ -1,0 +1,25 @@
+# secrets
+.env
+Dependencies/token_*.txt
+
+# runtime state / logs (regenerated on each run, not source)
+__pycache__/
+*.pyc
+*.log
+trading_system.log
+daily_risk_state.json
+positions.json
+paper_trades.csv
+paper_trades_full.csv
+backtest_trades.csv
+backtest_results.csv
+"positions - Copy.csv"
+
+# large instrument-master data (fetched at runtime, not source)
+security_id_list.csv
+Dependencies/all_instrument*.csv
+Dependencies/dhan_instrument_master_cache.csv
+Dependencies/log_files/
+
+# backups
+*.bak_*

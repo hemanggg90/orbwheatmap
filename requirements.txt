@@ -1,0 +1,6 @@
+streamlit==1.61.1
+pandas==3.0.2
+numpy==2.5.2
+requests==2.34.2
+python-dotenv==1.2.3
+dhanhq==2.2.0
