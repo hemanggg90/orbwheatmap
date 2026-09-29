@@ -46,8 +46,14 @@ def _get_nse_fetcher() -> ow.NSEDataFetcher:
     return ow.NSEDataFetcher()
 
 
+@st.cache_resource(show_spinner=False)
+def _shared_state() -> dict:
+    # Survives browser reloads / new sessions, unlike st.session_state.
+    return {"active_mode": None}
+
+
 def _active_system() -> "ow.TradingSystem | None":
-    mode = st.session_state.get("active_mode")
+    mode = st.session_state.get("active_mode") or _shared_state()["active_mode"]
     if mode is None:
         return None
     return _get_system(mode)
@@ -101,6 +107,7 @@ if start_clicked:
     system = _get_system(mode)
     system.start()
     st.session_state.active_mode = mode
+    _shared_state()["active_mode"] = mode
     st.rerun()
 
 if stop_clicked:
@@ -120,10 +127,18 @@ else:
 
 st.sidebar.divider()
 st.sidebar.caption("Auto-refreshing every 15s to track live LTP.")
-st.markdown(
-    '<meta http-equiv="refresh" content="15">',
-    unsafe_allow_html=True,
-)
+
+
+# Server-side rerun (NOT a browser reload): keeps the Streamlit session and
+# the running trading thread intact.
+@st.fragment(run_every=15)
+def _auto_refresh():
+    if st.session_state.get("_refresh_armed"):
+        st.rerun()
+    st.session_state["_refresh_armed"] = True
+
+
+_auto_refresh()
 
 
 # ============================================
